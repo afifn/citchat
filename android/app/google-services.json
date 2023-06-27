@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "886886248097",
+    "project_id": "qr-code-7424e",
+    "storage_bucket": "qr-code-7424e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886886248097:android:915e3bcc1ad9faebfd4ae0",
+        "android_client_info": {
+          "package_name": "com.afifny.citchat.citchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886886248097-hgqm0mpl0iodofmq8duaot5ac7u5re6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4Zd3-1306cZlUfHwtMH8OhDN52jN9x90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886886248097-hgqm0mpl0iodofmq8duaot5ac7u5re6t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
