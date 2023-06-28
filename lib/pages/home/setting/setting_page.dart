@@ -36,12 +36,14 @@ class SettingPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('data', style: monsterratTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),),
+                    Text('Gegamlah tanganku ',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: monsterratTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),),
                     Text('data', style: monsterratTextStyle.copyWith(fontSize: 14),)
                   ],
                 ),
               ),
-              const Spacer(),
               CIconButton(
                 icon: const Icon(Iconsax.edit),
                 onPressed: () {
