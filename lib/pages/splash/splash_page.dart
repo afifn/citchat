@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
       });
     } else{
       Timer(const Duration(seconds: 2), () {
-        context.goNamed(RouteName.onboarding);
+        context.goNamed(RouteName.onBoarding);
       });
     }
   }

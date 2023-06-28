@@ -1,6 +1,6 @@
 import 'package:citchat/pages/home/chat/message_page.dart';
-import 'package:citchat/pages/home/contact_page.dart';
-import 'package:citchat/pages/home/setting_page.dart';
+import 'package:citchat/pages/home/contact/contact_page.dart';
+import 'package:citchat/pages/home/setting/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -55,10 +55,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               label: "Peoples",
-              icon: Icon(Iconsax.people),
+              icon: Icon(HeroIcons.users),
             ),
             BottomNavigationBarItem(
-              label: "Settings",
+              label: "Profile",
               icon: Icon(Iconsax.setting_3),
             ),
           ],

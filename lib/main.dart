@@ -21,6 +21,12 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(),
         ),
+        BlocProvider<PeopleBloc>(
+          create: (context) => PeopleBloc(),
+        ),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(),
+        ),
       ],
       child: MaterialApp.router(
         theme: ThemeData(useMaterial3: true, colorScheme: ColorSchema.lightColorScheme),

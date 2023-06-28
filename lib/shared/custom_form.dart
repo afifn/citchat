@@ -42,6 +42,7 @@ class CFormField extends StatelessWidget {
           autocorrect: false,
           validator: validator,
           maxLength: maxLength,
+          style: monsterratTextStyle.copyWith(),
           decoration: InputDecoration(
             hintText: !isShowTitle ? title : null,
             hintStyle: !isShowTitle ? monsterratTextStyle.copyWith(fontSize: 14) : null,

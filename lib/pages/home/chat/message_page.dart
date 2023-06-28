@@ -17,19 +17,28 @@ class MessagePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-
-        title: Text('Message', style: poppinsTextStyle.copyWith(fontWeight: medium),),
+        toolbarHeight: 140,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Message', style: poppinsTextStyle.copyWith(fontWeight: medium),),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+              child: CFormField(
+                controller: searchC,
+                isShowTitle: false,
+                isShowIcon: true,
+                title: "Search chat",
+                icon: const Icon(Iconsax.message_search),
+              ),
+            ),
+          ],
+        )
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         children: [
-          CFormField(
-            controller: searchC,
-            isShowTitle: false,
-            isShowIcon: true,
-            title: "Search chat",
-            icon: const Icon(Iconsax.message_search),
-          ),
+
           MessageCardItem(
             name: 'Afifah',
             photo: "assets/images/avatar-3.jpg",
@@ -61,6 +70,21 @@ class MessagePage extends StatelessWidget {
           ),
 
           const MessageCardItem(
+            name: 'Yumi\'s ',
+            photo: "assets/images/avatar-5.jpg",
+            message: 'Watashi waaaa',
+            time: '6:19 am',
+          ),const MessageCardItem(
+            name: 'Yumi\'s ',
+            photo: "assets/images/avatar-5.jpg",
+            message: 'Watashi waaaa',
+            time: '6:19 am',
+          ),const MessageCardItem(
+            name: 'Yumi\'s ',
+            photo: "assets/images/avatar-5.jpg",
+            message: 'Watashi waaaa',
+            time: '6:19 am',
+          ),const MessageCardItem(
             name: 'Yumi\'s ',
             photo: "assets/images/avatar-5.jpg",
             message: 'Watashi waaaa',
