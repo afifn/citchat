@@ -1,3 +1,4 @@
+import 'package:bcrypt/bcrypt.dart';
 import 'package:citchat/shared/custom_button.dart';
 import 'package:citchat/shared/custom_card_item.dart';
 import 'package:citchat/shared/custom_form.dart';
@@ -13,6 +14,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
+  @override
+  void initState() {
+    final enc = BCrypt.hashpw("password", BCrypt.gensalt());
+    print(enc);
+    final bool checkPassword = BCrypt.checkpw('passwords', enc);
+    print(checkPassword);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textSecond = Theme.of(context).colorScheme.secondary;

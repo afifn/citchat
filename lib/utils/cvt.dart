@@ -3,39 +3,38 @@ import 'dart:typed_data';
 import 'package:hex/hex.dart';
 
 class CVT {
-  static String hexASCII(String hex) {
+  static String stringHEXtostringASCII(String strhex) {
+    String hexString = strhex;
     List<String> splitted = [];
-    for (int i = 0; i < hex.length; i = i + 2) {
-      splitted.add(hex.substring(i, i + 2));
+    for (int i = 0; i < hexString.length; i = i + 2) {
+      splitted.add(hexString.substring(i, i + 2));
     }
-    String ascii = List.generate(splitted.length, (index) =>
-        String.fromCharCode(int.parse(splitted[index], radix: 16))
-    ).join();
+    String ascii = List.generate(splitted.length,
+            (i) => String.fromCharCode(int.parse(splitted[i], radix: 16))).join();
     return ascii;
   }
 
-  static int hexInt(String hex) {
-    return int.parse(hex, radix: 16);
+  static int stringHEXtoInt(String strhex) {
+    return int.parse(strhex, radix: 16);
   }
 
-  static Uint8List hexByteArray(String hex) {
-    return Uint8List.fromList(HEX.decode(hex));
+  static Uint8List stringHEXtobytearray(String strhex) {
+    return Uint8List.fromList(HEX.decode(strhex));
   }
 
-  static String byteArrayStrHex(List<int> hex) {
-    return HEX.encode(hex).toUpperCase();
+  static String byteArraytoStringHEX(List<int> strhex) {
+    return HEX.encode(strhex).toUpperCase();
   }
 
-  static List<int> int16LittleEndian(int value) {
-    return Uint8List(2)..buffer.asByteData().setInt16(0, value, Endian.little);
-  }
+  static List<int> int16LitteEndian(int value) =>
+      Uint8List(2)..buffer.asByteData().setInt16(0, value, Endian.little);
 
   static String base64toStringHex(String strbase64) {
-    return CVT.byteArrayStrHex(base64.decode(strbase64));
+    return CVT.byteArraytoStringHEX(base64.decode(strbase64));
   }
 
   static String stringHEXtoBase64(String strhex) {
-    return base64.encode(CVT.hexByteArray(strhex));
+    return base64.encode(CVT.stringHEXtobytearray(strhex));
   }
 
   static String byteArraytobase64(List<int> bytearray) {
