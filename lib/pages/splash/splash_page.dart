@@ -25,6 +25,7 @@ class _SplashPageState extends State<SplashPage> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       debugPrint(user.email);
+      debugPrint(user.uid);
       Timer(const Duration(seconds: 2), () {
         context.goNamed(RouteName.home);
       });

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:citchat/shared/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -88,4 +90,81 @@ class CIconButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class CIconTextButton extends StatefulWidget {
+  final int value;
+  final String title;
+  final Widget icon;
+  final VoidCallback? onPressed;
+  final Color bgColor;
+  final bool isPressed;
+  final ValueChanged<int?>? onChanged;
+  final int? groupValue;
+
+  const CIconTextButton({
+    super.key,
+    this.isPressed = false,
+    required this.title,
+    required this.icon,
+    this.onPressed,
+    required this.bgColor,
+    required this.value,
+    this.groupValue,
+    this.onChanged,
+  });
+
+  @override
+  State<CIconTextButton> createState() => _CIconTextButtonState();
+}
+
+class _CIconTextButtonState extends State<CIconTextButton> {
+
+  @override
+  Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: () {
+        if (widget.onChanged != null) {
+          widget.onChanged!(widget.value);
+        }
+      },
+      child: Container(
+        height: 45,
+        padding: const EdgeInsets.symmetric(horizontal: 11),
+        decoration: BoxDecoration(
+          color: widget.isPressed ? widget.bgColor : widget.bgColor.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            widget.icon,
+            const SizedBox(width: 8),
+            Text(
+              widget.title,
+              style: monsterratTextStyle.copyWith(fontSize: 14, color: colorScheme.onPrimary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Color getRandomColorFromScheme(ColorScheme colorScheme) {
+  List<Color> colors = [
+    colorScheme.primary,
+    colorScheme.primaryVariant,
+    colorScheme.secondary,
+    colorScheme.secondaryVariant,
+    colorScheme.surface,
+    colorScheme.error,
+    colorScheme.onPrimary,
+    colorScheme.onSecondary,
+    colorScheme.onSurface,
+    colorScheme.onBackground,
+    colorScheme.onError,
+  ];
+  Random random = Random();
+  return colors[random.nextInt(colors.length)];
 }

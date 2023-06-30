@@ -6,9 +6,9 @@ class Sp{
     final SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString(key, data);
   }
-  static void storeDataString(String key) async {
+  static Future<String> storeDataString(String key) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.getString(key);
+    return pref.getString(key) ?? "";
   }
 
   static void removeData(String key) async {

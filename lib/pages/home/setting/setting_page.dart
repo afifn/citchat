@@ -1,59 +1,166 @@
+import 'package:citchat/bloc/bloc.dart';
+import 'package:citchat/models/user_model.dart';
+import 'package:citchat/routes/router.dart';
 import 'package:citchat/shared/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-import '../../../shared/custom_form.dart';
 import '../../../shared/theme.dart';
 
 
-class SettingPage extends StatelessWidget {
+class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
 
   @override
+  State<SettingPage> createState() => _SettingPageState();
+}
+
+class _SettingPageState extends State<SettingPage> {
+  @override
   Widget build(BuildContext context) {
-    final searchC = TextEditingController();
-    int _currentIndex = 0;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    UserBloc userBloc = context.read<UserBloc>();
+    int selectedValue = 1;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('My Profile' ,style: poppinsTextStyle.copyWith(fontWeight: medium),),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-        children: [
-          Row(
+      body: StreamBuilder<User>(
+        stream: userBloc.streamUserProfil(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Tidak dapat mengambil data'),
+            );
+          }
+          User? user = snapshot.data;
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             children: [
-              Container(
-                height: 75,
-                width: 75,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(image: AssetImage("assets/images/ava.jpg"))
-                ),
+              Row(
+                children: [
+                  Container(
+                    height: 75,
+                    width: 75,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(image: AssetImage("assets/images/ava.jpg"))
+                    ),
+                  ),
+                  const SizedBox(width: 16,),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(user?.name as String,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: monsterratTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),),
+                        Text(user?.email as String, style: monsterratTextStyle.copyWith(fontSize: 14),)
+                      ],
+                    ),
+                  ),
+                  CIconButton(
+                    icon: const Icon(Iconsax.edit),
+                    onPressed: () {},
+                  ),
+                ],
               ),
-              const SizedBox(width: 16,),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 24),
+              Text('My status', style: monsterratTextStyle.copyWith(fontSize: 14, fontWeight: medium),),
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                   children: [
-                    Text('Gegamlah tanganku ',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: monsterratTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),),
-                    Text('data', style: monsterratTextStyle.copyWith(fontSize: 14),)
+                    CIconTextButton(
+                      value: 1,
+                      title: 'Gaming',
+                      icon: const Icon(Iconsax.game),
+                      bgColor: colorScheme.primary,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value!;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    CIconTextButton(
+                      title: 'Away',
+                      icon: const Icon(Iconsax.bag_tick),
+                      bgColor: colorScheme.error,
+                      value: 2,
+                      onChanged: (value) {
+                       setState(() {
+                         selectedValue = value!;
+                       });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    CIconTextButton(
+                      title: 'At Work',
+                      icon: const Icon(Iconsax.monitor),
+                      bgColor: colorScheme.secondary,
+                      value: 3,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value!;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    CIconTextButton(
+                      title: 'Busy',
+                      icon: const Icon(BoxIcons.bx_sleepy),
+                      bgColor: colorScheme.tertiary,
+                      value: 4,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value!;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
-              CIconButton(
-                icon: const Icon(Iconsax.edit),
+              const SizedBox(height: 16,),
+              Text('My Account', style: monsterratTextStyle.copyWith(fontWeight: medium),),
+              const SizedBox(height: 4,),
+              CTextButton(
+                title: 'Switch to Other Account', onPressed: (){},
+              ),CTextButton(
+                title: 'Sign Out',
                 onPressed: () {
-
+                  context.read<AuthBloc>().add(
+                    AuthEventLogout()
+                  );
                 },
-              )
+              ),
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthStateSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message, style: poppinsTextStyle,)));
+                    setState(() {
+                      context.goNamed(RouteName.login);
+                    });
+                  }
+                  if (state is AuthStateError) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error, style: poppinsTextStyle,)));
+                  }
+                },
+                child: const SizedBox(),
+              ),
             ],
-          )
-        ],
-      ),
+          );
+        },
+      )
     );
   }
 }
