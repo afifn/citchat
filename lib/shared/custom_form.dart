@@ -23,7 +23,7 @@ class CFormField extends StatelessWidget {
     this.icon,
     this.onChanged,
     this.keyboardType,
-    Key? key
+    Key? key,
   }) : super(key: key);
 
   @override

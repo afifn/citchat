@@ -1,14 +1,12 @@
 import 'package:citchat/pages/auth/login_page.dart';
 import 'package:citchat/pages/auth/register_page.dart';
 import 'package:citchat/pages/home/chat/chat_page.dart';
-import 'package:citchat/pages/home/contact/contact_page.dart';
 import 'package:citchat/pages/home/home_page.dart';
+import 'package:citchat/pages/home/profile/edit_profile_page.dart';
 import 'package:citchat/pages/onboarding/on_boarding_page.dart';
 import 'package:citchat/pages/splash/splash_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-
-import '../pages/home/setting/setting_page.dart';
 
 part 'route_name.dart';
 final router = GoRouter(
@@ -47,6 +45,11 @@ final router = GoRouter(
             name: RouteName.chat,
             builder: (context, state) => const ChatPage(),
           ),
+          GoRoute(
+            path: 'edit_profile',
+            name: RouteName.editProfile,
+            builder: (context, state) => const EditProfilePage(),
+          )
         ]
       ),
     ]

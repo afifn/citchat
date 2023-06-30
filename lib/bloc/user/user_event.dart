@@ -8,7 +8,7 @@ class UserEventUpdate extends UserEvent {
   UserEventUpdate(this.name);
   final String name;
 }
-class UserEventPhoto extends UserState {
-  final String photo;
-  UserEventPhoto(this.photo);
+class UserEventUpdatePhoto extends UserEvent {
+  final File photo;
+  UserEventUpdatePhoto(this.photo);
 }

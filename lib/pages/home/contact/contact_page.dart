@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:citchat/bloc/bloc.dart';
+import 'package:citchat/models/user_model.dart';
 import 'package:citchat/shared/custom_card_item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -15,6 +18,7 @@ class ContactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PeopleBloc peopleBloc = context.read<PeopleBloc>();
     final searchC = TextEditingController();
 
     return Scaffold(
@@ -37,26 +41,54 @@ class ContactPage extends StatelessWidget {
           ],
         )
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          children: [
-            _listPeople()
-          ],
-        ),
+      body: StreamBuilder<QuerySnapshot<User>>(
+        stream: peopleBloc.streamPeople(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Tidak dapat mengambil data'),
+            );
+          }
+          List<User> allPeople = [];
+          for (var element in snapshot.data!.docs) {
+            allPeople.add(element.data());
+          }
+          if (allPeople.isEmpty) {
+            return const Center(
+              child: Text("Tidak ada data."),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                _listPeople(allPeople)
+              ],
+            ),
+          );
+        }
       ),
     );
   }
-  Widget _listPeople() {
+  Widget _listPeople(List<User> allPeople) {
     return Expanded(
-      child: GridView(
+      child: GridView.builder(
+        itemCount: allPeople.length,
+        itemBuilder: (context, index) {
+          User user = allPeople[index];
+          return CardPeopleItem(name: user.name!, email: user.email!, photo: "");
+        },
         shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisSpacing: 16, mainAxisSpacing: 16, crossAxisCount: 2),
-        children: const [
-          CardPeopleItem(name: 'Afif', email: 'afif@mail.com', photo: ""),
-          CardPeopleItem(name: 'Endank Soekamti Aninananan Endank Soekamti Aninananan', email: 'endankSoekamti@mail.com', photo: ""),
-
-        ],
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          crossAxisCount: 2,
+        ),
       ),
     );
   }

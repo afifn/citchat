@@ -9,14 +9,14 @@ import 'package:icons_plus/icons_plus.dart';
 import '../../../shared/theme.dart';
 
 
-class SettingPage extends StatefulWidget {
-  const SettingPage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<SettingPage> createState() => _SettingPageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _SettingPageState extends State<SettingPage> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -28,7 +28,7 @@ class _SettingPageState extends State<SettingPage> {
         title: Text('My Profile' ,style: poppinsTextStyle.copyWith(fontWeight: medium),),
       ),
       body: StreamBuilder<User>(
-        stream: userBloc.streamUserProfil(),
+        stream: userBloc.streamUserProfile(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -49,9 +49,13 @@ class _SettingPageState extends State<SettingPage> {
                   Container(
                     height: 75,
                     width: 75,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(image: AssetImage("assets/images/ava.jpg"))
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: (user!.photo != null)
+                            ? NetworkImage(user.photo!)
+                            : const AssetImage("assets/images/ava.jpg") as ImageProvider<Object>,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16,),
@@ -69,7 +73,9 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   CIconButton(
                     icon: const Icon(Iconsax.edit),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.goNamed(RouteName.editProfile);
+                    },
                   ),
                 ],
               ),
