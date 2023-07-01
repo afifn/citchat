@@ -41,6 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           }
           User? user = snapshot.data;
+          print("photo ${user!.photo}");
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             children: [
@@ -52,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: (user!.photo != null)
+                        image: (user.photo!.isNotEmpty)
                             ? NetworkImage(user.photo!)
                             : const AssetImage("assets/images/ava.jpg") as ImageProvider<Object>,
                       ),
@@ -63,11 +64,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(user?.name as String,
+                        Text(user.name as String,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: monsterratTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),),
-                        Text(user?.email as String, style: monsterratTextStyle.copyWith(fontSize: 14),)
+                        Text(user.email as String, style: monsterratTextStyle.copyWith(fontSize: 14),)
                       ],
                     ),
                   ),

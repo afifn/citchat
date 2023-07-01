@@ -128,7 +128,7 @@ class BubbleChatItem extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(photo),
+                image: (photo.isNotEmpty) ? NetworkImage(photo) : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
                 fit: BoxFit.cover,
               )
             ),
@@ -192,66 +192,71 @@ class CardPeopleItem extends StatelessWidget {
   final String name;
   final String email;
   final String photo;
+  final VoidCallback onPressed;
 
   const CardPeopleItem({
     Key? key,
     required this.name,
     required this.email,
     required this.photo,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      child: Center(
-        child: Column(
-          children: [
-            if (photo.isNotEmpty)
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage(photo),
-                    fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              if (photo.isNotEmpty)
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(photo),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-            if (photo.isEmpty)
-              Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage("assets/images/ava.jpg"),
-                    fit: BoxFit.cover,
+              if (photo.isEmpty)
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/ava.jpg"),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
 
-            const SizedBox(height: 8),
-            Text(
-              name,
-              style: monsterratTextStyle.copyWith(fontWeight: semiBold, fontSize: 12),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              email,
-              style: monsterratTextStyle.copyWith(fontSize: 11),
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            )
-          ],
+              const SizedBox(height: 8),
+              Text(
+                name,
+                style: monsterratTextStyle.copyWith(fontWeight: semiBold, fontSize: 12),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                email,
+                style: monsterratTextStyle.copyWith(fontSize: 11),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
         ),
       ),
     );

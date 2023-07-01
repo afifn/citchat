@@ -1,3 +1,4 @@
+import 'package:citchat/models/user_model.dart';
 import 'package:citchat/pages/auth/login_page.dart';
 import 'package:citchat/pages/auth/register_page.dart';
 import 'package:citchat/pages/home/chat/chat_page.dart';
@@ -41,9 +42,15 @@ final router = GoRouter(
         builder: (context, state) => const HomePage(),
         routes: [
           GoRoute(
-            path: 'contact',
+            path: ':uid',
             name: RouteName.chat,
-            builder: (context, state) => const ChatPage(),
+            builder: (context, state) {
+              User user = state.extra as User;
+              return ChatPage(
+                uid: state.pathParameters["uid"]!,
+                user: user,
+              );
+            },
           ),
           GoRoute(
             path: 'edit_profile',

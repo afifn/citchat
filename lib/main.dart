@@ -27,6 +27,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(),
         ),
+        BlocProvider<ChatBloc>(
+          create: (context) => ChatBloc(),
+        )
       ],
       child: MaterialApp.router(
         theme: ThemeData(useMaterial3: true, colorScheme: ColorSchema.lightColorScheme),

@@ -18,7 +18,6 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   File? _imageFile;
-  String? _uploadedImageUrl;
   @override
   Widget build(BuildContext context) {
     UserBloc userBloc = context.read<UserBloc>();
@@ -66,7 +65,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           fit: BoxFit.cover,
                           image: (_imageFile != null)
                               ? FileImage(_imageFile!)
-                              : (user.photo != null)
+                              : (user.photo!.isNotEmpty)
                               ? NetworkImage(user.photo!)
                               : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
                         ),
