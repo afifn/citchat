@@ -128,7 +128,9 @@ class BubbleChatItem extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: (photo.isNotEmpty) ? NetworkImage(photo) : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
+                image: (photo.isNotEmpty)
+                    ? NetworkImage(photo)
+                    : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
                 fit: BoxFit.cover,
               )
             ),
@@ -177,7 +179,9 @@ class BubbleChatItem extends StatelessWidget {
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage(photo),
+                  image: (photo.isNotEmpty)
+                      ? NetworkImage(photo)
+                      : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
                   fit: BoxFit.cover,
                 )
             ),

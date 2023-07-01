@@ -96,17 +96,23 @@ class _ChatPageState extends State<ChatPage> {
             child: Text("tidak ada pesan"),
           );
         }
+        String millisecondsToTime(int milliseconds) {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+          String time = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+          return time;
+        }
         return ListView.builder(
           reverse: true,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           itemCount: listChat.length,
           itemBuilder: (BuildContext context, int index) {
             ChatModel chatModel = listChat[index];
+            String time = millisecondsToTime(int.parse(chatModel.timestamp));
             return BubbleChatItem(
               message: chatModel.content,
               photo: widget.user.photo!,
               isSender: (chatModel.idFrom == widget.user.uid),
-              time: chatModel.timestamp,
+              time: time,
             );
           },
         );
