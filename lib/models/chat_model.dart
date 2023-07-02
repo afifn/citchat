@@ -1,4 +1,4 @@
-class ChatModel{
+class ChatModel {
   final String idFrom;
   final String idTo;
   final String timestamp;
@@ -14,20 +14,20 @@ class ChatModel{
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
-      idFrom: json["idFrom"],
-      idTo: json["idTo"],
-      timestamp: json["timestamp"],
-      content: json["content"],
-      type: json["type"]
-  );
+        idFrom: json["idFrom"] ?? "",
+        idTo: json["idTo"] ?? "",
+        timestamp: json["timestamp"] ?? "",
+        content: json["content"] ?? "",
+        type: json["type"] ?? "",
+      );
 
   Map<String, dynamic> toJson() => {
-    "idFrom": idFrom,
-    "idTo": idTo,
-    "timestamp": timestamp,
-    "content": content,
-    "type": type,
-  };
+        "idFrom": idFrom,
+        "idTo": idTo,
+        "timestamp": timestamp,
+        "content": content,
+        "type": type,
+      };
 }
 
 class TypeMessage {

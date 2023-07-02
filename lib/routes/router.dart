@@ -10,8 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 part 'route_name.dart';
+
 final router = GoRouter(
-  errorBuilder: (context, state) => const Text('Not found'),
+    errorBuilder: (context, state) => const Text('Not found'),
     routes: [
       GoRoute(
         path: '/',
@@ -19,45 +20,44 @@ final router = GoRouter(
         builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
-        path: '/onboarding',
-        name: RouteName.onBoarding,
-        builder: (context, state) => const OnBoardingPage(),
-        routes: [
-          GoRoute(
-            path: 'register',
-            name: RouteName.register,
-            builder: (context, state) => const RegisterPage(),
-          ),
-        ]
-      ),
+          path: '/onboarding',
+          name: RouteName.onBoarding,
+          builder: (context, state) => const OnBoardingPage(),
+          routes: [
+            GoRoute(
+              path: 'register',
+              name: RouteName.register,
+              builder: (context, state) => const RegisterPage(),
+            ),
+          ]),
       GoRoute(
         path: '/login',
         name: RouteName.login,
         builder: (context, state) => const LoginPage(),
       ),
-
       GoRoute(
-        path: '/home',
-        name: RouteName.home,
-        builder: (context, state) => const HomePage(),
-        routes: [
-          GoRoute(
-            path: ':uid',
-            name: RouteName.chat,
-            builder: (context, state) {
-              User user = state.extra as User;
-              return ChatPage(
-                uid: state.pathParameters["uid"]!,
-                user: user,
-              );
-            },
-          ),
-          GoRoute(
-            path: 'edit_profile',
-            name: RouteName.editProfile,
-            builder: (context, state) => const EditProfilePage(),
-          )
-        ]
-      ),
-    ]
-);
+          path: '/home',
+          name: RouteName.home,
+          builder: (context, state) => const HomePage(),
+          routes: [
+            GoRoute(
+              path: ':uid',
+              name: RouteName.chat,
+              builder: (context, state) {
+                User user = state.extra as User;
+                return ChatPage(
+                  uid: state.pathParameters["uid"]!,
+                  user: user,
+                );
+              },
+            ),
+            GoRoute(
+              path: 'editProfile/:id',
+              name: RouteName.editProfile,
+              builder: (context, state) => EditProfilePage(
+                id: state.pathParameters["id"]!,
+                user: state.extra as User,
+              ),
+            )
+          ]),
+    ]);

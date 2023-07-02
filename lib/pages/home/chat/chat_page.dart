@@ -9,7 +9,6 @@ import 'package:citchat/utils/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
   final String uid;
@@ -22,21 +21,28 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final _key = GlobalKey<FormState>();
-  String currentUid = "";
-  String groupChatId = "";
+  late String currentUid;
+  late String groupChatId;
 
   @override
   void initState() {
+    currentUid = "";
+    groupChatId = "";
     _getCurrentUid();
     super.initState();
   }
 
   Future<void> _getCurrentUid() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    currentUid = prefs.getString(Const.keyUid) ?? "";
+    currentUid = await Sp.storeDataString(Const.keyUid);
 
-    String uidFrom = widget.user.uid!;
-    groupChatId = '$currentUid-$uidFrom';
+    String uidFrom = widget.uid;
+    setState(() {
+      if (currentUid.compareTo(uidFrom) < 0) {
+        groupChatId = '$currentUid-$uidFrom';
+      } else {
+        groupChatId = '$uidFrom-$currentUid';
+      }
+    });
   }
 
   @override
@@ -51,13 +57,16 @@ class _ChatPageState extends State<ChatPage> {
         title: Column(
           children: [
             Text(
-              widget.user.name!,
-              style: poppinsTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),
+              widget.user.name,
+              style:
+                  poppinsTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),
             ),
-            Text(
-              'online',
-              style: poppinsTextStyle.copyWith(fontSize: 12, color: textSecond),
-            ),
+            if (widget.user.isOnline)
+              Text(
+                "online",
+                style:
+                    poppinsTextStyle.copyWith(fontSize: 12, color: textSecond),
+              ),
           ],
         ),
         centerTitle: true,
@@ -67,7 +76,6 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Flexible(child: listChat(context, chatBloc)),
           chatField(context, messageC)
-
         ],
       ),
     );
@@ -75,49 +83,51 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget listChat(BuildContext context, ChatBloc chatBloc) {
     return StreamBuilder<QuerySnapshot<ChatModel>>(
-      stream: chatBloc.streamChat(groupChatId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return const Center(
-            child: Text('Tidak dapat mengambil data'),
-          );
-        }
-        List<ChatModel> listChat = [];
-        for (var element in snapshot.data!.docs) {
-          listChat.add(element.data());
-        }
-        if (listChat.isEmpty) {
-          return const Center(
-            child: Text("tidak ada pesan"),
-          );
-        }
-        String millisecondsToTime(int milliseconds) {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-          String time = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-          return time;
-        }
-        return ListView.builder(
-          reverse: true,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          itemCount: listChat.length,
-          itemBuilder: (BuildContext context, int index) {
-            ChatModel chatModel = listChat[index];
-            String time = millisecondsToTime(int.parse(chatModel.timestamp));
-            return BubbleChatItem(
-              message: chatModel.content,
-              photo: widget.user.photo!,
-              isSender: (chatModel.idFrom == widget.user.uid),
-              time: time,
+        stream: chatBloc.streamChat(groupChatId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        );
-      }
-    );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Tidak dapat mengambil pesan'),
+            );
+          }
+          List<ChatModel> listChat = [];
+          for (var element in snapshot.data!.docs) {
+            listChat.add(element.data());
+          }
+          if (listChat.isEmpty) {
+            return const Center(
+              child: Text("tidak ada pesan"),
+            );
+          }
+          String millisecondsToTime(int milliseconds) {
+            DateTime dateTime =
+                DateTime.fromMillisecondsSinceEpoch(milliseconds);
+            String time =
+                '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+            return time;
+          }
+
+          return ListView.builder(
+            reverse: true,
+            padding: const EdgeInsets.symmetric(horizontal: 22),
+            itemCount: listChat.length,
+            itemBuilder: (BuildContext context, int index) {
+              ChatModel chatModel = listChat[index];
+              String time = millisecondsToTime(int.parse(chatModel.timestamp));
+              return BubbleChatItem(
+                message: chatModel.content,
+                photo: widget.user.photo,
+                isSender: (chatModel.idFrom == widget.user.uid),
+                time: time,
+              );
+            },
+          );
+        });
   }
 
   Widget chatField(BuildContext context, TextEditingController messageC) {
@@ -163,14 +173,14 @@ class _ChatPageState extends State<ChatPage> {
                 if (_key.currentState!.validate()) {
                   if (messageC.text.isNotEmpty) {
                     context.read<ChatBloc>().add(
-                      ChatEventSending(
-                        content: messageC.text,
-                        idForm: currentUid,
-                        idTo: widget.user.uid!,
-                        type: 1,
-                        groupId: groupChatId,
-                      ),
-                    );
+                          ChatEventSending(
+                            content: messageC.text,
+                            idForm: currentUid,
+                            idTo: widget.user.uid,
+                            type: 1,
+                            groupId: groupChatId,
+                          ),
+                        );
                     messageC.clear();
                   }
                 }

@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "886886248097",
-    "project_id": "qr-code-7424e",
-    "storage_bucket": "qr-code-7424e.appspot.com"
+    "project_number": "950630738520",
+    "project_id": "citchat-7b622",
+    "storage_bucket": "citchat-7b622.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:886886248097:android:915e3bcc1ad9faebfd4ae0",
+        "mobilesdk_app_id": "1:950630738520:android:1224ec8dc97c299c56782d",
         "android_client_info": {
           "package_name": "com.afifny.citchat.citchat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "886886248097-hgqm0mpl0iodofmq8duaot5ac7u5re6t.apps.googleusercontent.com",
+          "client_id": "950630738520-3i1jdcgakfq4frbrnh1rrdg2er52a37c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB4Zd3-1306cZlUfHwtMH8OhDN52jN9x90"
+          "current_key": "AIzaSyD26oTlGk0Tg28HAI0guk1UOZsruOUcPMQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "886886248097-hgqm0mpl0iodofmq8duaot5ac7u5re6t.apps.googleusercontent.com",
+              "client_id": "950630738520-3i1jdcgakfq4frbrnh1rrdg2er52a37c.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

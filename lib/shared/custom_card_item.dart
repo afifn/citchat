@@ -42,28 +42,29 @@ class MessageCardItem extends StatelessWidget {
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
                     fit: BoxFit.cover,
-                  image: AssetImage(photo),
-                )
-              ),
-              child: isOnline ? Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  width: 16.0,
-                  height: 16.0,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: const Icon(
-                    Icons.circle,
-                    color: Colors.green,
-                    size: 14.0,
-                  ),
-                ),
-              ) : null,
+                    image: AssetImage(photo),
+                  )),
+              child: isOnline
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        width: 16.0,
+                        height: 16.0,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.circle,
+                          color: Colors.green,
+                          size: 14.0,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -87,7 +88,11 @@ class MessageCardItem extends StatelessWidget {
                 ],
               ),
             ),
-            Text(time, style: monsterratTextStyle.copyWith(fontSize: 12, fontWeight: semiBold),),
+            Text(
+              time,
+              style: monsterratTextStyle.copyWith(
+                  fontSize: 12, fontWeight: semiBold),
+            ),
           ],
         ),
       ),
@@ -109,7 +114,8 @@ class BubbleChatItem extends StatelessWidget {
     this.isSender = true,
     this.hasImage = false,
     this.image,
-    required this.message, required this.time,
+    required this.message,
+    required this.time,
   });
 
   @override
@@ -119,23 +125,25 @@ class BubbleChatItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
-        mainAxisAlignment: isSender ? MainAxisAlignment.start : MainAxisAlignment.end,
+        mainAxisAlignment:
+            isSender ? MainAxisAlignment.start : MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (isSender) Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: (photo.isNotEmpty)
-                    ? NetworkImage(photo)
-                    : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
-                fit: BoxFit.cover,
-              )
-            ),
-          ),
-          SizedBox(width: isSender ? 8 : 0),
+          // if (isSender)
+          //   Container(
+          //     width: 35,
+          //     height: 35,
+          //     decoration: BoxDecoration(
+          //         shape: BoxShape.circle,
+          //         image: DecorationImage(
+          //           image: (photo.isNotEmpty)
+          //               ? NetworkImage(photo)
+          //               : const AssetImage('assets/images/ava.jpg')
+          //                   as ImageProvider<Object>,
+          //           fit: BoxFit.cover,
+          //         )),
+          //   ),
+          // SizedBox(width: isSender ? 8 : 0),
           Flexible(
             child: Container(
               // width: 235,
@@ -143,21 +151,28 @@ class BubbleChatItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSender ? colorOnPrimary : colorOnSecondary,
                 borderRadius: BorderRadius.only(
-                  topRight: const Radius.circular(14),
-                  topLeft: const Radius.circular(14),
-                  bottomLeft: Radius.circular(isSender ? 0 : 14),
-                  bottomRight: Radius.circular(isSender ? 14 : 0),
+                  topRight: const Radius.circular(18),
+                  topLeft: const Radius.circular(18),
+                  bottomLeft: Radius.circular(isSender ? 0 : 18),
+                  bottomRight: Radius.circular(isSender ? 18 : 0),
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  if (hasImage) ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(image!, fit: BoxFit.cover,),
-                  ),
-                  if (hasImage) const SizedBox(height: 6,),
+                  if (hasImage)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        image!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  if (hasImage)
+                    const SizedBox(
+                      height: 6,
+                    ),
                   Text(
                     message,
                     style: monsterratTextStyle.copyWith(fontWeight: medium),
@@ -165,25 +180,13 @@ class BubbleChatItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     time,
-                    style: monsterratTextStyle.copyWith(fontSize: 12, color: Theme.of(context).colorScheme.secondary),
+                    style: monsterratTextStyle.copyWith(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.secondary),
                     textAlign: TextAlign.end,
                   )
                 ],
               ),
-            ),
-          ),
-          SizedBox(width: !isSender ? 8 : 0),
-          if (!isSender) Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: (photo.isNotEmpty)
-                      ? NetworkImage(photo)
-                      : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
-                  fit: BoxFit.cover,
-                )
             ),
           ),
         ],
@@ -243,11 +246,11 @@ class CardPeopleItem extends StatelessWidget {
                     ),
                   ),
                 ),
-
               const SizedBox(height: 8),
               Text(
                 name,
-                style: monsterratTextStyle.copyWith(fontWeight: semiBold, fontSize: 12),
+                style: monsterratTextStyle.copyWith(
+                    fontWeight: semiBold, fontSize: 12),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
                 textAlign: TextAlign.center,

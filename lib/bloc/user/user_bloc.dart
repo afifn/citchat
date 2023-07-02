@@ -16,15 +16,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final FirebaseFirestore fStore = FirebaseFirestore.instance;
   final FirebaseStorage fStorage = FirebaseStorage.instance;
 
-  Stream<User> streamUserProfile() async*{
+  Stream<User> streamUserProfile() async* {
     final String uid = await Sp.storeDataString(Const.keyUid);
     yield* fStore
         .collection("users")
         .doc(uid)
         .withConverter<User>(
-      fromFirestore: (snapshot, options) => User.fromJson(snapshot.data()!),
-      toFirestore: (value, options) => value.toJson(),
-    ).snapshots().map((snapshot) => snapshot.data()!);
+          fromFirestore: (snapshot, options) => User.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
+        .snapshots()
+        .map((snapshot) => snapshot.data()!);
   }
 
   UserBloc() : super(UserStateInitial()) {
@@ -33,13 +35,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       try {
         emit(UserStateLoading());
         final DocumentReference ref = fStore.collection("users").doc(uid);
-        ref.update({
-          'updated_at': DateTime.now(),
-          'name': event.name,
-        })
+        ref
+            .update({
+              'updated_at': DateTime.now(),
+              'name': event.name,
+            })
             .then((value) => debugPrint('Successfully update'))
-            .onError((error, stackTrace) =>
-            debugPrint("failed update data $error"));
+            .onError(
+                (error, stackTrace) => debugPrint("failed update data $error"));
 
         emit(UserStateSuccess("Successfully update profile"));
       } catch (e) {
@@ -58,17 +61,35 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         final snapshot = await uploadTask;
         final downloadUrl = await snapshot.ref.getDownloadURL();
         final DocumentReference ref = fStore.collection("users").doc(uid);
-        ref.update({
-          'updated_at': DateTime.now(),
-          'photo': downloadUrl,
-        })
+        ref
+            .update({
+              'updated_at': DateTime.now(),
+              'photo': downloadUrl,
+            })
             .then((value) => debugPrint('Successfully update'))
-            .onError((error, stackTrace) =>
-            debugPrint("failed update data $error"));
+            .onError(
+                (error, stackTrace) => debugPrint("failed update data $error"));
 
         emit(UserStateSuccess("Successfully update photo"));
       } catch (e) {
         emit(UserStateError("Update failed"));
+      }
+    });
+
+    on<UserEventOnline>((event, emit) async {
+      try {
+        emit(UserStateLoading());
+        final String uid = await Sp.storeDataString(Const.keyUid);
+        final DocumentReference ref = fStore.collection("users").doc(uid);
+        ref
+            .update({
+              'isOnline': event.isOnline,
+            })
+            .then((value) => debugPrint("user is ${event.isOnline}"))
+            .onError((error, stackTrace) => debugPrint("set data user $error"));
+        emit(UserStateOnline());
+      } catch (e) {
+        emit(UserStateError(e.toString()));
       }
     });
   }
