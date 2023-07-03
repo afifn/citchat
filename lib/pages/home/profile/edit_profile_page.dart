@@ -147,16 +147,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         if (state is UserStateSuccess) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
-                            state.message,
-                            style: poppinsTextStyle,
-                          )));
+                                state.message,
+                                style: poppinsTextStyle,
+                              ),
+                            duration: const Duration(milliseconds: 800),
+                          ));
                         }
                         if (state is UserStateError) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
-                            state.err,
-                            style: poppinsTextStyle,
-                          )));
+                                state.err,
+                                style: poppinsTextStyle,
+                              ),
+                            duration: const Duration(milliseconds: 1500),
+                          ));
                         }
                       },
                       child: const SizedBox(),

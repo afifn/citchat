@@ -114,35 +114,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                       AuthEventRegister(nameC.text, emailC.text,
                                           passwordC.text),
                                     );
-                                setState(() {
-                                  _isLoading = true;
-                                });
                               }
                             },
                           ),
-                        ),
-                        BlocListener<AuthBloc, AuthState>(
-                          listener: (context, state) {
-                            if (state is AuthStateError) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(state.error,
-                                          style: poppinsTextStyle)));
-                            } else if (state is AuthStateSuccess) {
-                              setState(() {
-                                _isLoading = false;
-                                context.pop();
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(state.message,
-                                          style: poppinsTextStyle)));
-                            }
-                          },
-                          child: const SizedBox(),
                         ),
                       ],
                     ),
@@ -165,21 +139,48 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
           ),
-          if (_isLoading)
-            Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Loading...',
-                  style: poppinsTextStyle,
-                )
-              ],
-            ))
+          BlocConsumer<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthStateLoading) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Loading...',
+                        style: poppinsTextStyle,
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+              listener: (context, state) {
+                if (state is AuthStateError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(state.error,
+                              style: poppinsTextStyle,
+                          ),
+                      ),
+                  );
+                } else if (state is AuthStateSuccess) {
+                  context.pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(state.message,
+                              style: poppinsTextStyle,
+                          ),
+                      ),
+                  );
+                }
+              }
+          )
         ],
       ),
     );

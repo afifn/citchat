@@ -45,7 +45,9 @@ class MessageCardItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(photo),
+                    image: (photo.isNotEmpty)
+                        ? NetworkImage(photo)
+                        : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
                   )),
               child: isOnline
                   ? Align(

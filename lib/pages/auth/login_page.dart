@@ -27,6 +27,8 @@ class _LoginPageState extends State<LoginPage> {
 
     final emailC = TextEditingController();
     final passwordC = TextEditingController();
+    String _email = "";
+    String _passwd = "";
 
     return Scaffold(
       body: Padding(
@@ -60,6 +62,9 @@ class _LoginPageState extends State<LoginPage> {
                             icon: const Icon(Icons.mail),
                             controller: emailC,
                             title: "Email",
+                            onChanged: (value) {
+                              _email = value;
+                            },
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -76,6 +81,9 @@ class _LoginPageState extends State<LoginPage> {
                             icon: const Icon(Icons.lock),
                             controller: passwordC,
                             title: "Password",
+                            onChanged: (value) {
+                              _email = value;
+                            },
                             keyboardType: TextInputType.text,
                             obscureText: true,
                             validator: (value) {
@@ -99,31 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                                   context.read<AuthBloc>().add(
                                     AuthEventLogin(emailC.text, passwordC.text),
                                   );
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
                                 }
-
                               },
                             ),
-                          ),
-                          BlocListener<AuthBloc, AuthState>(
-                            listener: (context, state) {
-                              if (state is AuthStateLogin) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                                context.goNamed(RouteName.home);
-                              } else if (state is AuthStateError) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(state.error, style: poppinsTextStyle))
-                                );
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              }
-                            },
-                            child: const SizedBox(),
                           ),
                         ],
                       ),
@@ -151,17 +137,33 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            if (_isLoading) Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 6),
-                    Text('Loading...', style: poppinsTextStyle,)
-                  ],
-                )
+            BlocConsumer<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthStateLoading) {
+                  return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(height: 6),
+                          Text('Loading...', style: poppinsTextStyle,)
+                        ],
+                      )
+                  );
+                }
+                return const SizedBox();
+              },
+              listener: (context, state) {
+                if (state is AuthStateLogin) {
+                  context.goNamed(RouteName.home);
+                } else if (state is AuthStateError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error, style: poppinsTextStyle))
+                  );
+                }
+              },
             ),
           ],
         ),

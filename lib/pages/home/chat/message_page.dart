@@ -1,19 +1,43 @@
-import 'package:citchat/routes/router.dart';
+import 'package:citchat/bloc/bloc.dart';
+import 'package:citchat/models/chat_model.dart';
+import 'package:citchat/models/user_model.dart' as UserModel;
 import 'package:citchat/shared/custom_card_item.dart';
 import 'package:citchat/shared/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 import '../../../shared/custom_form.dart';
 
 
-class MessagePage extends StatelessWidget {
+class MessagePage extends StatefulWidget {
   const MessagePage({super.key});
+
+  @override
+  State<MessagePage> createState() => _MessagePageState();
+}
+
+class _MessagePageState extends State<MessagePage> {
+  String currentId = "";
+  String groupChatId = "";
+
+  @override
+  void initState() {
+    _getCurrentId();
+    super.initState();
+  }
+
+  Future<void> _getCurrentId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      currentId = user.uid;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final searchC = TextEditingController();
+    ChatBloc chatBloc = context.read<ChatBloc>();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,63 +59,46 @@ class MessagePage extends StatelessWidget {
           ],
         )
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        children: [
-
-          MessageCardItem(
-            name: 'Afifah',
-            photo: "assets/images/avatar-3.jpg",
-            message: 'Nanti malam apakah kamu ada acara?',
-            time: '3:32 pm',
-            isOnline: true,
-            onPressed: () {
-              context.goNamed(RouteName.chat);
-            },
-          ),
-          const MessageCardItem(
-            name: 'Anisa',
-            photo: "assets/people3.png",
-            message: 'Selamat siang',
-            time: '2:20 pm',
-          ),
-          const MessageCardItem(
-            name: 'Udin Sadboy',
-            photo: "assets/people2.png",
-            message: 'Halo kawan, apa kabar apakah kamu baik-baik saja?, aku disini baik-baik saja',
-            time: '2:30 pm',
-            isOnline: true,
-          ),
-          const MessageCardItem(
-            name: 'Tata Sinaga',
-            photo: "assets/people4.png",
-            message: 'Selamat pagi mas bro',
-            time: '8:24 am',
-          ),
-
-          const MessageCardItem(
-            name: 'Yumi\'s ',
-            photo: "assets/images/avatar-5.jpg",
-            message: 'Watashi waaaa',
-            time: '6:19 am',
-          ),const MessageCardItem(
-            name: 'Yumi\'s ',
-            photo: "assets/images/avatar-5.jpg",
-            message: 'Watashi waaaa',
-            time: '6:19 am',
-          ),const MessageCardItem(
-            name: 'Yumi\'s ',
-            photo: "assets/images/avatar-5.jpg",
-            message: 'Watashi waaaa',
-            time: '6:19 am',
-          ),const MessageCardItem(
-            name: 'Yumi\'s ',
-            photo: "assets/images/avatar-5.jpg",
-            message: 'Watashi waaaa',
-            time: '6:19 am',
-          ),
-
-        ],
+      body: StreamBuilder<List<UserModel.UserWithChats>>(
+        stream: chatBloc.streamMessage(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<UserModel.UserWithChats> userWithChats = snapshot.data!;
+            return ListView.builder(
+              itemCount: userWithChats.length,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              itemBuilder: (BuildContext context, int index) {
+                UserModel.UserWithChats userWithChat = userWithChats[index];
+                UserModel.User user = userWithChat.user;
+                ChatModel? chats = userWithChat.chats;
+                return MessageCardItem(
+                  name: user.name,
+                  photo: user.photo,
+                  message: chats != null ? chats.content : "",
+                  time: '3:32 pm',
+                  isOnline: user.isOnline,
+                  onPressed: () {
+                    if (currentId.compareTo(user.uid) < 0) {
+                      groupChatId = '$currentId-${user.uid}';
+                    } else {
+                      groupChatId = '${user.uid}-$currentId';
+                    }
+                    print(groupChatId);
+                  },
+                );
+              },
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text("Tidak dapat mengambil data"),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }
       ),
     );
   }

@@ -28,6 +28,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         .snapshots()
         .map((snapshot) => snapshot.data()!);
   }
+  Stream<User> streamUserStatus(String uid) async* {
+    yield* fStore.collection("users").doc(uid)
+        .withConverter<User>(fromFirestore: (snapshot, options) => User.fromJson(snapshot.data()!),
+        toFirestore: (value, options) => value.toJson(),
+    ).snapshots().map((event) => event.data()!);
+  }
 
   UserBloc() : super(UserStateInitial()) {
     on<UserEventUpdate>((event, emit) async {

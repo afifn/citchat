@@ -1,3 +1,5 @@
+import 'package:citchat/models/chat_model.dart';
+
 class User {
   String name;
   String email;
@@ -28,4 +30,11 @@ class User {
         "photo": photo,
         "isOnline": isOnline,
       };
+}
+
+class UserWithChats {
+  final User user;
+  final ChatModel? chats;
+
+  UserWithChats({required this.user, required this.chats});
 }

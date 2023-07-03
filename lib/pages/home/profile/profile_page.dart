@@ -164,6 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 CTextButton(
                   title: 'Sign Out',
                   onPressed: () {
+                    context.read<UserBloc>().add(UserEventOnline(false));
                     context.read<AuthBloc>().add(AuthEventLogout());
                   },
                 ),

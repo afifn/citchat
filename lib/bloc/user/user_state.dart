@@ -10,10 +10,7 @@ class UserStateLoading extends UserState {}
 class UserStateUpdatePhoto extends UserState {}
 
 class UserStateUpdate extends UserState {}
-
 class UserStateOnline extends UserState {}
-
-class UserStateOffline extends UserState {}
 
 class UserStateSuccess extends UserState {
   UserStateSuccess(this.message);

@@ -54,20 +54,52 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Column(
-          children: [
-            Text(
-              widget.user.name,
-              style:
-                  poppinsTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),
-            ),
-            if (widget.user.isOnline)
-              Text(
-                "online",
-                style:
-                    poppinsTextStyle.copyWith(fontSize: 12, color: textSecond),
-              ),
-          ],
+        title: StreamBuilder<User>(
+          stream: context.read<UserBloc>().streamUserStatus(widget.user.uid),
+          builder: (context, snapshot) {
+            User? user = snapshot.data;
+            if (user != null) {
+              return Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: user.photo.isNotEmpty
+                              ? NetworkImage(user.photo)
+                              : const AssetImage('assets/images/ava.jpg') as ImageProvider<Object>,
+                          fit: BoxFit.cover,
+                        )
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.name,
+                          style:
+                          poppinsTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        user.isOnline
+                            ? Text("online",
+                          style:
+                          poppinsTextStyle.copyWith(fontSize: 12, color: textSecond),
+                        )
+                            : const SizedBox()
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const SizedBox();
+          },
         ),
         centerTitle: true,
       ),
