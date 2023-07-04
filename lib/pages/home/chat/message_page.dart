@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:citchat/bloc/bloc.dart';
 import 'package:citchat/models/chat_model.dart';
-import 'package:citchat/models/user_model.dart' as UserModel;
+import 'package:citchat/models/user_model.dart';
 import 'package:citchat/shared/custom_card_item.dart';
 import 'package:citchat/shared/theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -28,10 +30,10 @@ class _MessagePageState extends State<MessagePage> {
   }
 
   Future<void> _getCurrentId() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      currentId = user.uid;
-    }
+    // User? user = FirebaseAuth.instance.currentUser;
+    // if (user != null) {
+    //   currentId = user.uid;
+    // }
   }
 
   @override
@@ -59,18 +61,19 @@ class _MessagePageState extends State<MessagePage> {
           ],
         )
       ),
-      body: StreamBuilder<List<UserModel.UserWithChats>>(
-        stream: chatBloc.streamMessage(),
+      body: StreamBuilder<List<UserWithChats>>(
+        stream: chatBloc.streamUserChat(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<UserModel.UserWithChats> userWithChats = snapshot.data!;
+            List<UserWithChats> userWithChats = snapshot.data!;
             return ListView.builder(
               itemCount: userWithChats.length,
               padding: const EdgeInsets.symmetric(horizontal: 24),
               itemBuilder: (BuildContext context, int index) {
-                UserModel.UserWithChats userWithChat = userWithChats[index];
-                UserModel.User user = userWithChat.user;
+                UserWithChats userWithChat = userWithChats[index];
+                User user = userWithChat.user;
                 ChatModel? chats = userWithChat.chats;
+                log(user.name);
                 return MessageCardItem(
                   name: user.name,
                   photo: user.photo,
@@ -78,12 +81,12 @@ class _MessagePageState extends State<MessagePage> {
                   time: '3:32 pm',
                   isOnline: user.isOnline,
                   onPressed: () {
-                    if (currentId.compareTo(user.uid) < 0) {
-                      groupChatId = '$currentId-${user.uid}';
-                    } else {
-                      groupChatId = '${user.uid}-$currentId';
-                    }
-                    print(groupChatId);
+                    // if (currentId.compareTo(user.uid) < 0) {
+                    //   groupChatId = '$currentId-${user.uid}';
+                    // } else {
+                    //   groupChatId = '${user.uid}-$currentId';
+                    // }
+                    // print(groupChatId);
                   },
                 );
               },

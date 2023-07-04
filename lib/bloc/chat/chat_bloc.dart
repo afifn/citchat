@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:citchat/utils/shared_preferences.dart';
@@ -29,58 +30,51 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         .snapshots();
   }
 
-  Stream<List<UserWithChats>> streamMessage() async* {
-    String uid = await Sp.storeDataString(Const.keyUid);
-    String groupChatId = "";
-    Stream<List<UserWithChats>> combinedStream = fstore.collection("users").snapshots().asyncMap((querySnapshot) async {
+  Stream<List<UserWithChats>> streamUserChat() {
+    return fstore.collection("users").snapshots().asyncMap((query) async {
+      String groupChatId = "";
       List<User> users = [];
       List<UserWithChats> usersWithLastChat = [];
+      String currentId = await Sp.storeDataString(Const.keyUid);
 
-      // Mengambil data pengguna dari koleksi "users"
-      for (DocumentSnapshot doc in querySnapshot.docs) {
-        User user = User.fromJson(doc.data() as Map<String, dynamic>);
-        if (user.uid != uid) {
+      for (DocumentSnapshot snapshot in query.docs) {
+        User user = User.fromJson(snapshot.data() as Map<String, dynamic>);
+        if (user.uid != currentId) {
           users.add(user);
+          if (currentId.compareTo(user.uid) < 0) {
+            groupChatId = '$currentId-${user.uid}';
+          } else {
+            groupChatId = '${user.uid}-$currentId';
+          }
+          log(groupChatId);
+          QuerySnapshot chatSnapshot = await fstore
+              .collection("message")
+              .doc(groupChatId)
+              .collection(groupChatId)
+              .orderBy("timestamp", descending: true)
+              .limit(1)
+              .get();
+
+          List<ChatModel> chats = chatSnapshot.docs.map((chatDoc) =>
+              ChatModel.fromJson(chatDoc.data() as Map<String, dynamic>)).toList();
+          if (chats.isNotEmpty) {
+            UserWithChats userWithLastChat = UserWithChats(user: user, chats: chats.isNotEmpty ? chats.first : null);
+            usersWithLastChat.add(userWithLastChat);
+          }
         }
       }
-
-      // Mengambil data terakhir chat dari koleksi "messages"
-      for (User user in users) {
-        if (uid.compareTo(user.uid) < 0) {
-          groupChatId = '$uid-${user.uid}';
-        } else {
-          groupChatId = '${user.uid}-$uid';
-        }
-        QuerySnapshot chatSnapshot = await fstore
-            .collection("messages")
-            .doc(groupChatId)
-            .collection(groupChatId)
-            .orderBy("timestamp", descending: true)
-            .limit(1)
-            .get();
-
-        List<ChatModel> chats = chatSnapshot.docs.map((chatDoc) => ChatModel.fromJson(chatDoc.data() as Map<String, dynamic>)).toList();
-        if (chats.isNotEmpty) {
-          UserWithChats userWithLastChat = UserWithChats(user: user, chats: chats.first);
-          usersWithLastChat.add(userWithLastChat);
-        }
-      }
-
       return usersWithLastChat;
     });
+  }
 
-    // // Menggabungkan stream pengguna dengan stream perubahan pada koleksi "messages"
-    // Stream<List<UserWithChats>> finalStream = Rx.combineLatest2<List<UserWithChats>, QuerySnapshot>(
-    //   combinedStream,
-    //   fstore.collection("messages").snapshots(),
-    //       (usersWithLastChat, _) => usersWithLastChat,
-    // );
+  Stream<List<UserWithChats>> streamMessage() {
+    _fetchUsersWithLastChat();
 
-    // Mengirimkan data terbaru melalui stream controller
-    // _userStreamController.addStream(finalStream);
-    //
-    // // Mengembalikan stream dari stream controller
-    // return _userStreamController.stream;
+    Stream<QuerySnapshot> messagesStream = fstore.collection("messages").snapshots();
+    messagesStream.listen((_) {
+      _fetchUsersWithLastChat();
+    });
+    return _userStreamController.stream;
   }
 
 
@@ -114,7 +108,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       List<ChatModel> chats = chatSnapshot.docs.map((chatDoc) =>
           ChatModel.fromJson(chatDoc.data() as Map<String, dynamic>)).toList();
       if (chats.isNotEmpty) {
-        UserWithChats userWithLastChat = UserWithChats(user: user, chats: chats.isNotEmpty ? chats.first : null);
+        UserWithChats userWithLastChat = UserWithChats(user: user, chats:  chats.first);
         userWithChats.add(userWithLastChat);
       }
     }
